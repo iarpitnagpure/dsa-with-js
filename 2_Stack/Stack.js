@@ -9,12 +9,17 @@ const maxSize = 5;
 function push(item) {
     if (data.length === maxSize) return 'Stack is full';
     data[data.length] = item;
+
+    return data.length;
 }
 
-push(10);       // [10]
-push(20);       // [10, 20]
-push(30);       // [10, 20, 30]
-console.log('Stack--->', data);
+console.log('push--->', push(10));                      // 1
+console.log('push--->', push(20));                      // 2
+console.log('push--->', push(30));                      // 3
+console.log('push--->', push(40));                      // 4
+console.log('push--->', push(50));                      // 5
+console.log('push--->', push(60));                      // Stack is full
+console.log('Stack--->', data);                         // [10, 20, 30, 40, 50]
 
 
 function pop() {
@@ -25,6 +30,5 @@ function pop() {
     return value;
 }
 
-const removed = pop();
-console.log('removed--->', removed);  // 30
-console.log('Stack--->', data);                     // [10, 20]
+console.log('pop--->',  pop());                         // 50
+console.log('Stack--->', data);                         // [10, 20, 30, 40]
