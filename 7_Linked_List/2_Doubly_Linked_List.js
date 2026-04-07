@@ -1,6 +1,6 @@
-// Singly Linked List (SLL)
-// A Singly Linked List is a linear data structure where elements (called nodes) are connected using pointers.
-// 10 → 20 → 30 → 90 → null
+// Doubly Linked List (DLL)
+// A doubly linked list (DLL) is a type of data structure where each element (node) is connected to both its previous and next node.
+// 10 ⇄ 20 ⇄ 30 ⇄ 40
 
 // Time Complexity:
 //      Append: O(1)
@@ -20,10 +20,10 @@
 // | print     | O(n) | O(1)  |
 // | overall   | —    | O(n)  |
 
-
 class Node {
     constructor(data) {
         this.data = data;
+        this.prev = null;
         this.next = null;
     }
 }
@@ -37,28 +37,28 @@ class LinkedList {
     append(data) {
         const newNode = new Node(data);
 
-        // Insert at head if head if empty 
         if (!this.head) {
             this.head = newNode;
             this.tail = newNode;
+
             return;
         }
 
+        newNode.prev = this.tail;
         this.tail.next = newNode;
         this.tail = newNode;
     }
 
     print() {
         let current = this.head;
-        let result = "";
+        let result = '';
 
         while (current) {
-            result += current.data + " → ";
+            result += current.data + " ⇄ ";
             current = current.next;
         }
 
         result += "null";
-
         console.log(result);
     }
 
@@ -68,13 +68,18 @@ class LinkedList {
         // remove at head
         if (index === 0) {
             this.head = this.head.next;
-            if (!this.head) this.tail = null;
+
+            if (this.head) {
+                this.head.prev = null;
+            } else {
+                this.tail = null;
+            }
 
             return;
         }
 
-        let counter = 0;
         let current = this.head;
+        let counter = 0;
 
         // move to (index - 1)
         while (current && counter < index - 1) {
@@ -85,12 +90,16 @@ class LinkedList {
         // index out of bounds
         if (!current || !current.next) return;
 
-        // delete node at tail and update tail to previous node
-        if (current.next === this.tail) {
-            this.tail = current;
-        }
+        const nodeToDelete = current.next;
 
-        current.next = current.next.next;
+        // if deleting tail
+        if (nodeToDelete === this.tail) {
+            this.tail = current;
+            this.tail.next = null;
+        } else {
+            current.next = nodeToDelete.next;
+            nodeToDelete.next.prev = current;
+        }
     }
 
     insert(index, data) {
@@ -100,17 +109,22 @@ class LinkedList {
 
         // insert at head
         if (index === 0) {
-            newNode.next = this.head;
-            this.head = newNode;
+            // Head is empty
+            if (!this.head) {
+                this.head = newNode;
+                this.tail = newNode;
+                return;
+            }
 
-            // if list was empty
-            if (!this.tail) this.tail = newNode;
+            newNode.next = this.head;
+            this.head.prev = newNode;
+            this.head = newNode;
 
             return;
         }
 
-        let counter = 0;
         let current = this.head;
+        let counter = 0;
 
         // move to (index - 1)
         while (current && counter < index - 1) {
@@ -121,26 +135,28 @@ class LinkedList {
         // out of bounds
         if (!current) return;
 
-        //  insert node
         newNode.next = current.next;
-        current.next = newNode;
+        newNode.prev = current;
 
-        // update tail if inserted at end
-        if (newNode.next === null) {
+        if (current.next) {
+            current.next.prev = newNode;
+        } else {
             this.tail = newNode;
         }
+
+        current.next = newNode;
     }
 
     search(data) {
-        let position = 0;
         let current = this.head;
+        let position = 0;
 
         while (current) {
             if (current.data === data) {
                 return position;
             }
-            current = current.next;
             position++;
+            current = current.next;
         }
 
         return -1;
@@ -159,40 +175,36 @@ list.append(30);
 list.append(40);
 console.log('Linked List --->', list);
 // {
-//     head: { data: 10, next: { data: 20, next: { data: 30, next: { data: 40, next: null } } } },
-//     tail: { data: 40, next: null }
+//   head: <ref *1> Node {
+//     data: 10,
+//     prev: null,
+//     next: Node { data: 20, prev: [Circular *1], next: [Node] }
+//   },
+//   tail: <ref *2> Node {
+//     data: 40,
+//     prev: Node { data: 30, prev: [Node], next: [Circular *2] },
+//     next: null
+//   }
 // }
 
-
 // Print Linked List Data
-list.print();                                           // 10 → 20 → 30 → 40 → null                            
+list.print();                                           // 10 ⇄ 20 ⇄ 30 ⇄ 40 ⇄ null    
 
 
 // Delete Node from Linked List
 list.delete(2);
-list.print();                                           // 10 → 20 → 40 → null        
+list.print();                                           // 10 ⇄ 20 ⇄ 40 ⇄ null      
 list.delete(2);                                         // Deleting Tail Node
-list.print();                                           // 10 → 20 → null
-console.log('Linked List --->', list);
-// {
-//     head: { data: 10, next: { data: 20, next: null },
-//     tail: { data: 20, next: null }
-// }
+list.print();                                           // 10 ⇄ 20 ⇄ null
 
 
 // Insert Node from Linked List
-list.insert(2, 30);                         
-list.print();                                           // 10 → 20 → 30 → null
+list.insert(2, 30);
+list.print();                                           // 10 ⇄ 20 ⇄ 30 ⇄ null
 list.insert(3, 90);
-list.print();                                           // 10 → 20 → 30 → 90 → null
-console.log('Linked List --->', list);
-// {
-//     head: { data: 10, next: { data: 20, next: { data: 30, next: { data: 90, next: null } } } },
-//     tail: { data: 90, next: null }
-// }
+list.print();                                           // 10 ⇄ 20 ⇄ 30 ⇄ 90 ⇄ null
 
 
 // Search Node from Linked List
 const index = list.search(90);
 console.log('Node at index --->', index);               // 3
-
