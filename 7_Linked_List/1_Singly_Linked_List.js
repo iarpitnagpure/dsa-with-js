@@ -145,6 +145,23 @@ class LinkedList {
 
         return -1;
     }
+
+    reverse() {
+        let current = this.head;
+        let prev = null;
+
+        // Save old head (it becomes new tail)
+        this.tail = this.head;
+
+        while (current !== null) {
+            const nextNode = current.next;
+            current.next = prev;
+            prev = current;
+            current = nextNode
+        }
+
+        this.head = prev;
+    }
 }
 
 // Creating Linked List
@@ -181,7 +198,7 @@ console.log('Linked List --->', list);
 
 
 // Insert Node from Linked List
-list.insert(2, 30);                         
+list.insert(2, 30);
 list.print();                                           // 10 → 20 → 30 → null
 list.insert(3, 90);
 list.print();                                           // 10 → 20 → 30 → 90 → null
@@ -196,3 +213,61 @@ console.log('Linked List --->', list);
 const index = list.search(90);
 console.log('Node at index --->', index);               // 3
 
+
+// Reverse Linked List
+list.reverse();
+list.print();                                           // 90 → 30 → 20 → 10 → null
+
+// Reverse Linked List Visualization
+// You take one node from the front and push it to the front of a new reversed list
+
+// head
+//  ↓
+// 1 → 2 → 3 → 4 → null
+//                    ↑
+//                  tail
+
+// 🧩 Iteration 1
+// prev = null
+// current = 1 → 2 → 3 → 4
+// Action:
+// next → 2
+// Reverse link → 1 → null
+// After:
+// prev      current
+//  ↓          ↓
+// 1 → null   2 → 3 → 4 → null
+
+// 🧩 Iteration 2
+// Action:
+// next → 3
+// Reverse → 2 → 1
+// After:
+// prev           current
+//  ↓              ↓
+// 2 → 1 → null   3 → 4 → null
+
+// 🧩 Iteration 3
+// Action:
+// next → 4
+// Reverse → 3 → 2
+// After:
+// prev                current
+//  ↓                   ↓
+// 3 → 2 → 1 → null    4 → null
+
+// 🧩 Iteration 4
+// Action:
+// Save next → null
+// Reverse → 4 → 3
+// After:
+// prev                     current
+//  ↓                        ↓
+// 4 → 3 → 2 → 1 → null     null
+
+// Final State
+// head
+//  ↓
+// 4 → 3 → 2 → 1 → null
+//                    ↑
+//                  tail
