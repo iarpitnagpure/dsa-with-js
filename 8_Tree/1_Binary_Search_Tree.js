@@ -1,4 +1,29 @@
 // Binary Search Tree
+// A Binary Search Tree (BST) is a special type of binary tree where:
+// For every node:
+// Left subtree values < Node value < Right subtree values
+//     10
+//    /  \
+//   5    15
+//  / \   / \
+// 3   7 12 18
+
+// Time Complexity
+// | Operation               | Best Case | Average Case | Worst Case |
+// | ----------------------- | --------- | ------------ | ---------- |
+// | Append                  | O(1)      | O(log n)     | O(n)       |
+// | Search                  | O(1)      | O(log n)     | O(n)       |
+// | Delete                  | O(1)      | O(log n)     | O(n)       |
+// | Traversal (DFS/BFS)     | O(n)      | O(n)         | O(n)       |
+// | Min / Max               | O(1)      | O(log n)     | O(n)       |
+
+// Space Complexity
+// | Aspect                    | Space Complexity |
+// | ------------------------- | ---------------- |
+// | Tree Storage (nodes)      | O(n)             | (n - Nodes of tree)
+// | Recursive Stack (DFS)     | O(h)             | (h - height of tree)
+// | Queue (BFS)               | O(w)             | (w - Width of tree)
+
 
 class Node {
     constructor(data) {
@@ -56,7 +81,7 @@ class BST {
     }
 
     preOrder(root = this.root, result = []) {
-        if (!root) return [];
+        if (!root) return result;
 
         result.push(root.data);
         this.preOrder(root.left, result);
@@ -66,7 +91,7 @@ class BST {
     }
 
     inOrder(root = this.root, result = []) {
-        if (!root) return [];
+        if (!root) return result;
 
         this.inOrder(root.left, result);
         result.push(root.data);
@@ -76,13 +101,77 @@ class BST {
     }
 
     postOrder(root = this.root, result = []) {
-        if (!root) return [];
+        if (!root) return result;
 
         this.postOrder(root.left, result);
         this.postOrder(root.right, result);
         result.push(root.data);
 
         return result;
+    }
+
+    bfSearch() {
+        if (!this.root) return [];
+
+        const queue = [this.root];
+        const result = [];
+
+        while (queue.length > 0) {
+            const current = queue.shift();
+            result.push(current.data);
+
+            if (current.left) queue.push(current.left);
+            if (current.right) queue.push(current.right);
+        }
+
+        return result;
+    }
+
+    minValue(root = this.root) {
+        if (!root) return null;
+
+        if (root.left) {
+            return this.minValue(root.left);
+        } else {
+            return root.data;
+        }
+    }
+
+    maxValue(root = this.root) {
+        if (!root) return null;
+
+        if (root.right) {
+            return this.maxValue(root.right);
+        } else {
+            return root.data;
+        }
+    }
+
+    delete(data) {
+        this.root = this.deleteNode(this.root, data);
+    }
+
+    deleteNode(root, data) {
+        if (!root) return null;
+
+        if (root.data > data) {
+            root.left = this.deleteNode(root.left, data);
+        } else if (root.data < data) {
+            root.right = this.deleteNode(root.right, data);
+        } else {
+            if (!root.left && !root.right) return null;
+
+            if (!root.left) return root.right;
+            if (!root.right) return root.left;
+
+            if (root.left && root.right) {
+                const current = this.minValue(root.right);
+                root.data = current;
+                root.right = this.deleteNode(root.right, current)
+            }
+        }
+
+        return root;
     }
 }
 
@@ -117,3 +206,26 @@ console.log('21 exist', bsTree.search(21));                         // false
 console.log('PreOrder', bsTree.preOrder());                         // [10, 8, 7, 9, 12, 11, 14, 20]
 console.log('InOrder', bsTree.inOrder());                           // [7, 8, 9, 10, 11, 12, 14, 20]
 console.log('PostOrder', bsTree.postOrder());                       // [7, 9, 8, 11, 20, 14, 12, 10]
+
+// Breadth First Search
+console.log('BFS', bsTree.bfSearch());                              // [10, 8, 12, 7, 9, 11, 14, 20]
+
+
+// MIN & MAX VALUE
+console.log('MIN', bsTree.minValue());                              // 7
+console.log('MAX', bsTree.maxValue());                              // 20
+
+
+// Delete Node
+bsTree.delete(20);
+//     10
+//    /  \
+//   8    12
+//  / \   / \
+// 7   9 11 14
+bsTree.delete(10);
+//     11
+//    /  \
+//   8    12
+//  / \     \
+// 7   9     14
