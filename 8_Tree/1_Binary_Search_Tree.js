@@ -173,6 +173,53 @@ class BST {
 
         return root;
     }
+
+    // DFS (Recursive)
+    // Time Complexity: O(n)
+    // Space Complexity: O(h) (height of tree)
+    maxHeightDFS(root = this.root) {
+        // If node is null → height = 0
+        if (!root) return 0;
+
+        // Recursively find height of left subtree
+        const leftHeight = this.maxHeightDFS(root.left);
+        // Recursively find height of right subtree
+        const rightHeight = this.maxHeightDFS(root.right);
+
+        // Return max height + 1 (for current node)
+        return Math.max(leftHeight, rightHeight) + 1;
+    }
+
+    // Alternate way
+    // BFS (Level Order)
+    // Time Complexity: O(n)
+    // Space Complexity: O(w) (width of tree)
+    maxHeightBFS(root = this.root) {
+        // If tree is empty → height = 0
+        if (!root) return 0;
+
+        const queue = [root];
+        let depth = 0;
+
+        // Traverse level by level
+        while (queue.length > 0) {
+            let size = queue.length; // number of nodes in current level
+
+            // Process all nodes in current level
+            for (let i = 0; i < size; i++) {
+                const current = queue.shift();
+
+                // Add children to queue for next level
+                if (current.left) queue.push(current.left);
+                if (current.right) queue.push(current.right);
+            }
+
+            // After finishing one level → increase depth
+            depth++;
+        }
+
+        return depth;
+    }
 }
 
 // Tree creation
@@ -229,3 +276,8 @@ bsTree.delete(10);
 //   8    12
 //  / \     \
 // 7   9     14
+
+
+// Max Height of tree
+console.log(bsTree.maxHeightDFS());                                    // 3
+console.log(bsTree.maxHeightBFS());                                    // 3
